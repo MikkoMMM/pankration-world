@@ -3,7 +3,8 @@ import "./index.css";
 import * as BABYLON from "babylonjs";
 import { room } from "./game/network";
 
-// Listen to patches comming
+window.addEventListener('DOMContentLoaded', function(){
+    // Listen to patches comming
 room.onStateChange.add(function(patches) {
     console.log("Server state changed: ", patches);
 });
@@ -13,6 +14,9 @@ const engine = new BABYLON.Engine(canvas, true);
 
 // This creates a basic Babylon Scene object (non-mesh)
 var scene = new BABYLON.Scene(engine);
+var gravityVector = new BABYLON.Vector3(0,-9.81, 0);
+var physicsPlugin = new BABYLON.CannonJSPlugin();
+scene.enablePhysics(gravityVector, physicsPlugin);
 
 // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
 var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
@@ -54,6 +58,11 @@ camera.keysRight.push(68)  //d
 // Attach default camera mouse navigation
 camera.attachControl(canvas);
 
+BABYLON.SceneLoader.ImportMesh("","","models/baseBody.babylon",
+scene,function(newMeshes) {
+    newMeshes.forEach(function(mesh){});
+});
+
 // Scene render loop
 engine.runRenderLoop(function() {
     scene.getMeshByName("sphere1").position.z -= 0.01;
@@ -63,4 +72,6 @@ engine.runRenderLoop(function() {
 // Resize the engine on window resize
 window.addEventListener('resize', function() {
     engine.resize();
+});
+
 });
